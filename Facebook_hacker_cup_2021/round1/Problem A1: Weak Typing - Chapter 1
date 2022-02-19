@@ -2,73 +2,228 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.Scanner;
 
-public class A1_Weak_typing_chapter_2 {
+public class A1_Weak_typing_chapter_1 {
 
-    static int testCases, n;
+    static PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
+
+    static int testCases, n, index;
 
     static char a[];
 
     static StringBuilder ans = new StringBuilder();
 
-    static long mod = (long) Math.pow(10, 9) + 7;
-
     static void solve(int testCases) {
 
-        long final_ans = 0, count_O = 0, count_X = 0, count_F = 0, per_pair = 0;
+        int countO = 0, countX = 0, total_run = 0;
 
-        for (char i : a) {
+        //System.out.println("running: "+testCases);
+        for (int i = 0; i < n; i++) {
 
-            switch (i) {
+            ++total_run;
+            //System.out.println("running: "+testCases);
+            if (a[i] == 'F') {
 
-                case 'F':
+                //++countX;
+                int j = i, countJ = 0;
 
-                    count_F++;
-                    break;
+                while (j < n && (a[j] == 'F' || a[j] == 'X')) {
 
-                case 'O':
+                    ++countJ;
+                    ++j;
 
-                    count_O += count_F + count_X + 1;
-                    per_pair += count_X;
-                    count_F = count_X = 0;
-                    break;
+                }
 
-                default:
-                    count_X += count_F + count_O + 1;
-                    per_pair += count_O;
-                    count_F = count_O = 0;
-                    break;
+                int k = i, countK = 0;
+
+                while (k < n && (a[k] == 'F' || a[k] == 'O')) {
+
+                    countK++;
+                    ++k;
+
+                }
+
+                if (countJ >= countK) {
+
+                    i = j - 0;
+
+                    //System.out.println("increase from the j");
+                } else {
+
+                    i = k - 0;
+
+                    //System.out.println("increase from the k");
+                }
+
+                if (i >= n) {
+
+                    /*if (total_run != 1) {
+                        ++countX;
+                    }*/
+                    ans.append("Case #").append(testCases).append(": ").append((countO + countX)).append("\n");
+
+                    return;
+
+                } else {
+
+                    //--i;
+                    ++countO;
+
+                    //System.out.println("increase at "+(i+1) );
+                    //System.out.println("max: "+Math.max(countJ,countK )+" "+a[i+1] );
+                }
+
+            } else if (a[i] == 'X') {
+
+                //++countX;
+                int temp_count = 0;
+
+                while (i < n && (a[i] == 'X' || a[i] == 'F')) {
+
+                    if (i + 1 < n && a[i + 1] == 'O') {
+
+                        //++countO;
+                        break;
+
+                    }
+
+                    ++temp_count;
+                    ++i;
+
+                }
+
+                //++countX;
+                if (i >= n) {
+
+                    /*if (total_run != 1) {
+                        ++countX;
+                    }*/
+                    ans.append("Case #").append(testCases).append(": ").append((countO + countX)).append("\n");
+
+                    return;
+
+                } else {
+
+                    //--i;
+                    ++countO;
+
+                    //System.out.println("increase at "+(i+1) );
+                    //System.out.println("temp_count: " + temp_count);
+                }
+
             }
 
-            final_ans = (final_ans + per_pair) % mod;
+            if (a[i] == 'O') {
+
+                //++countO;
+                int temp_count = 0;
+
+                while (i < n && (a[i] == 'O' || a[i] == 'F')) {
+
+                    if (i + 1 < n && a[i + 1] == 'X') {
+
+                        break;
+
+                    }
+
+                    ++temp_count;
+                    ++i;
+
+                }
+
+                if (i >= n) {
+
+                    /*if (total_run != 1) {
+                        ++countX;
+                    }*/
+                    ans.append("Case #").append(testCases).append(": ").append((countO + countX)).append("\n");
+
+                    return;
+
+                } else {
+
+                    //--i;
+                    ++countX;
+                    //System.out.println("increase at "+(i+1) );
+
+                    //System.out.println("temp_count1: " + a[i + 1] + " " + temp_count);
+                }
+
+            }
 
         }
 
-        ans.append("Case #").append(testCases).append(": ").append(final_ans).append("\n");
+        ans.append("Case #").append(testCases).append(": ").append((countO + countX)).append("\n");
+
+    }
+
+    static void solve() {
+
+        int switch_hand = 0;
+
+        StringBuilder sb=new StringBuilder();
+        
+        for (int i = 0; i < n; i++) {
+            
+            if(a[i]=='X' || a[i]=='O' ){
+                
+                sb.append(a[i]);
+                
+            }
+
+        }
+        
+        char g[]=sb.toString().toCharArray();
+        
+        int m=g.length;
+        
+        for(int i=0;i<m;i++){
+            
+            if(i+1<m && g[i]!=g[i+1] ){
+                
+                switch_hand++;
+                
+            }
+            
+        }
+
+        ans.append("Case #").append(index).append(": ").append((switch_hand)).append("\n");
 
     }
 
     public static void main(String[] amit) throws IOException {
 
-        File input_file = new File("A1_Weak_typing_chapter_2_testCases.txt");
+        File fileIn = new File("A1_Weak_typing_testCases.txt");
 
-        Scanner scanner = new Scanner(input_file);
+        Scanner scanner = new Scanner(fileIn);
 
-        int t = 0;
+        int t = 1;
 
         while (scanner.hasNextLine()) {
 
-            if (t == 0) {
+            if (t == 1) {
 
-                testCases = Integer.parseInt(scanner.nextLine().trim());
+                testCases = Integer.parseInt(scanner.nextLine());
 
             } else {
 
-                n = Integer.parseInt(scanner.nextLine().trim());
-                a = scanner.nextLine().trim().toCharArray();
+                try {
 
-                solve(t);
+                    n = Integer.parseInt(scanner.nextLine());
+                    a = scanner.nextLine().trim().toCharArray();
+
+                } catch (NumberFormatException e) {
+
+                    break;
+
+                }
+
+                index = t - 1;
+
+                solve();
 
             }
 
@@ -78,15 +233,22 @@ public class A1_Weak_typing_chapter_2 {
 
         scanner.close();
 
-        File file_output = new File("A1_Weak_typing_chapter_2_output.txt");
+        File file = new File("A1_Weak_typing.txt");
 
-        FileWriter out = new FileWriter(file_output);
+        FileWriter fw = new FileWriter(file);
 
-        out.write(ans.toString());
+        fw.write(ans.toString());
 
-        out.flush();
-        out.close();
+        fw.flush();
+        fw.close();
 
     }
 
 }
+/*
+
+1
+13
+FOXOFOXOFOXOF
+
+ */
