@@ -1,0 +1,92 @@
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+
+public class A1_Weak_typing_chapter_2 {
+
+    static int testCases, n;
+
+    static char a[];
+
+    static StringBuilder ans = new StringBuilder();
+
+    static long mod = (long) Math.pow(10, 9) + 7;
+
+    static void solve(int testCases) {
+
+        long final_ans = 0, count_O = 0, count_X = 0, count_F = 0, per_pair = 0;
+
+        for (char i : a) {
+
+            switch (i) {
+
+                case 'F':
+
+                    count_F++;
+                    break;
+
+                case 'O':
+
+                    count_O += count_F + count_X + 1;
+                    per_pair += count_X;
+                    count_F = count_X = 0;
+                    break;
+
+                default:
+                    count_X += count_F + count_O + 1;
+                    per_pair += count_O;
+                    count_F = count_O = 0;
+                    break;
+            }
+
+            final_ans = (final_ans + per_pair) % mod;
+
+        }
+
+        ans.append("Case #").append(testCases).append(": ").append(final_ans).append("\n");
+
+    }
+
+    public static void main(String[] amit) throws IOException {
+
+        File input_file = new File("A1_Weak_typing_chapter_2_testCases.txt");
+
+        Scanner scanner = new Scanner(input_file);
+
+        int t = 0;
+
+        while (scanner.hasNextLine()) {
+
+            if (t == 0) {
+
+                testCases = Integer.parseInt(scanner.nextLine().trim());
+
+            } else {
+
+                n = Integer.parseInt(scanner.nextLine().trim());
+                a = scanner.nextLine().trim().toCharArray();
+
+                solve(t);
+
+            }
+
+            ++t;
+
+        }
+
+        scanner.close();
+
+        File file_output = new File("A1_Weak_typing_chapter_2_output.txt");
+
+        FileWriter out = new FileWriter(file_output);
+
+        out.write(ans.toString());
+
+        out.flush();
+        out.close();
+
+    }
+
+}
