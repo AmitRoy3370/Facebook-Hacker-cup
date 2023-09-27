@@ -128,6 +128,8 @@ public class Problem_A1_Cheeseburger_Corollary_1 {
 
 	static void C(int t) {
 
+		ans.append("Case #").append(t).append(": ");
+
 		if(n == 1) {
 
 			ans.append(1);
@@ -152,104 +154,146 @@ public class Problem_A1_Cheeseburger_Corollary_1 {
 
 		}
 
-		Collections.sort(list);
+		/*for(long i : a) {
 
-		long sum = 0L;
-
-		for(long i : list) {
-
-			sum += i;
+			ans.append(i).append(" ");
 
 		}
 
-		long L = 1L, R = sum * 2L;
+		ans.append("\n");*/
 
-		while(R > L) {
+		Collections.sort(list);
 
-			long mid = (L + R) / 2L;
+		int index = 0;
 
-			boolean find = true;
+		for(long y : list) {
 
-			long mis_matched_element = -1L;
+			a[index++] = y;
 
-			boolean visit[] = new boolean[n];
+		}
 
-			int mis_matched_count = 0;
+		Map<Integer, Integer> connection = new HashMap<>();
 
-			for(int i = 0; i < n; ++i) {
+		Map<Long, Integer> map = new HashMap<>();
 
-				int l = 0, r = n;
+		long answer = -1L;
+		int back = n - 1;
+		long last = 0L;
 
-				long element = a[i];
+		for(int i = 1; i <= n / 2; ++i) {
 
-				visit[i] = true;
+			connection.put(i, back);
+			connection.put(back, i);
 
-				find = false;
+			long element = a[i] + a[back];
 
-				while(r > l) {
+			if(map.containsKey(element)) {
 
-					int mid_ = (l + r) / 2;
+				map.put(element, map.get(element) + 1);
 
-					if(a[mid_] + element == mid && !visit[mid_]) {
+				last = element;
 
-						find = true;
-						visit[mid_] = true;
-						break;
+			} else {
 
-					} else if(a[mid_] + element == mid) {
+				map.put(element, 1);
+				last = element;
 
-						L = mid_;
+			}
 
-					} else if(a[mid_] + element > mid) {
+			--back;
 
-						r = mid_ - 1;
+		}
+
+		if(map.size() == 1) {
+
+			for(long y : map.keySet()) {
+
+				last = y;
+				break;
+
+			}
+
+			long answer_ = last - a[0];
+
+			if(answer_ > 0L) {
+
+				answer = answer_;
+
+			}
+
+		}
+
+		for(int i = 1; i < n; ++i) {
+
+			long temp = a[i] + a[(int)connection.get(i)];
+
+			if(map.containsKey(temp)) {
+
+				map.put(temp, map.get(temp) - 1);
+
+				if(map.get(temp) <= 0) {
+
+					map.remove(temp);
+
+				}
+
+			}
+
+			if(!map.containsKey(temp)) {
+
+				//map.remove(temp);
+
+			}
+
+			int start = i, end = connection.get((int)i);
+
+			connection.put((i - 1), end);
+			connection.put(end, i - 1);
+
+			long pair = a[i - 1] + a[end];
+
+			if(!map.containsKey(pair)) {
+
+				map.put(pair, 1);
+
+			} else {
+
+				map.put(pair, 1 + map.get(pair));
+
+			}
+
+			if(map.size() == 1) {
+
+				long first = 0;
+
+				for(long i1 : map.keySet()) {
+
+					first = i1;
+					break;
+
+				}
+
+				long diff = first - a[i];
+
+				if(diff > 0) {
+
+					if(answer == -1) {
+
+						answer = diff;
 
 					} else {
 
-						l = mid_ + 1;
-
-					}
-
-				}
-
-				if(!find) {
-
-					++mis_matched_count;
-
-					mis_matched_element = a[i];
-
-					if(mis_matched_count > 1) {
-
-						break;
+						answer = Math.min(answer, diff);
 
 					}
 
 				}
 
 			}
-
-			if(mis_matched_count <= 1) {
-
-				System.out.println(mid);
-
-				ans.append(Math.abs(mis_matched_element - mid));
-
-				if(t != testCases) {
-
-					ans.append("\n");
-
-				}
-
-				return;
-
-			}
-
-			//L = mid + 1;
-			R = mid - 1;
 
 		}
 
-		ans.append(-1);
+		ans.append(answer);
 
 		if(t != testCases) {
 
@@ -263,39 +307,29 @@ public class Problem_A1_Cheeseburger_Corollary_1 {
 
 		ans.append("Case #").append(t).append(": ");
 
-		if(A > C && B > C) {
+		long only_one = C / A;
 
-			ans.append(0);
+		long only_two = 2L * (C / B) - 1L;
 
-		} else if(A > C) {
+		long one_single_max_double = (2L * (((C - A)) / B)) + 1L;
 
-			long buns = (C / B) * 2L;
+		long two_single_max_double = 2L + (2L * (((C - 2L * A)) / B));
 
-			ans.append(--buns);
+		long final_ans = Math.max(only_two, only_one);
 
-		} else if(B > C) {
+		if(C > A) {
 
-			long buns = (C / A);
+			final_ans = Math.max(final_ans, one_single_max_double);
 
-			ans.append(--buns);
+		} 
 
-		} else {
+		if(C > 2L * A) {
 
-			long max_buns = (C / (A + B)) * 4L;
-
-			max_buns = Math.max(max_buns, (C / A) * 2L);
-
-			max_buns = Math.max(max_buns, (C / B) * 2L);
-
-			long max_crims = (C / (A + B)) * 3L;
-
-			max_crims = Math.max(max_crims, (C / A) * 1L);
-
-			max_crims = Math.max(max_crims, (C / B) * 2L);
-
-			ans.append(Math.min(max_crims, --max_buns));
+			final_ans = Math.max(final_ans, two_single_max_double);
 
 		}
+
+		ans.append(final_ans);
 
 		if(t != testCases) {
 
@@ -334,13 +368,29 @@ public class Problem_A1_Cheeseburger_Corollary_1 {
 
 					String s1[] = line.trim().split(" ");
 
-					R = Long.parseLong(s1[0]);
-					C = Long.parseLong(s1[1]);
-					A = Long.parseLong(s1[2]);
-					B = Long.parseLong(s1[3]);
-					//C = Long.parseLong(s1[2]);
+					A = Long.parseLong(s1[0]);
+					B = Long.parseLong(s1[1]);
+					C = Long.parseLong(s1[2]);
 
-					B(t);
+					solve(t);
+
+					/*n = Integer.parseInt(line.trim());
+
+					n = 2 * n - 1;
+
+					a = new long[n];
+
+					line = br.readLine();
+
+					String s1[] = line.trim().split(" ");
+
+					for(int i = 0; i < n; ++i) {
+
+						a[i] = Long.parseLong(s1[i]);
+
+					}
+
+					C(t);*/
 
 					line = br.readLine();
 
